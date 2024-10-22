@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 const app = express();
 app.use(express.json())
 
-const users = []
+
 //Criar usuarios
 app.post ("/usuarios", async(req,res) =>{
     await prisma.user.create({
@@ -22,20 +22,20 @@ app.post ("/usuarios", async(req,res) =>{
 })
 
 //Editar usuarios
-app.put("/usuarios/:id", async(req,res) =>{
+app.put ("/usuarios/:id", async(req,res) =>{
+
     await prisma.user.update({
         where:{
-          id:  req.params.id
+            id: req.params.id
         },
-        data: {
+        data:{
             email: req.body.email,
             name : req.body.name,
             telefone : req.body.telefone,
             senha: req.body.senha
         }
     })
-    console.log(req.body)
-    res.status(201).json("criado")
+    res.status(201).json(req.body)
 })
 
 /*
@@ -45,8 +45,31 @@ app.put("/usuarios/:id", async(req,res) =>{
 
 //listar usuarios
 app.get("/usuarios", async (req, res) => {
-    const users = await prisma.user.findMany()
+
+    let users = []
+    
+    if (req.query) {
+        users = await prisma.user.findMany({
+        where:{
+            name: req.query.name,
+            email: req.query.email
+        }
+       })
+    }else{
+        users = await prisma.user.findMany()
+    }
+
+    
     res.status(200).json(users)
 });
+
+app.delete ("/usuarios/:id", async(req,res) =>{
+    await prisma.user.delete({
+        where:{
+            id: req.params.id
+        }
+    })
+    res.status(200).json({message:"teste"})
+})
 
 app.listen(5173)
