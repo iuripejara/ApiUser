@@ -72,4 +72,4 @@ app.delete ("/usuarios/:id", async(req,res) =>{
     res.status(200).json({message:"teste"})
 })
 
-app.listen(5173)
+app.listen(3000)
